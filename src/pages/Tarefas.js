@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 
-import {Route, Link} from 'react-router-dom';
+import { Route, Link } from 'react-router-dom';
 
-import {} from 'react-transition-group';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 const TAREFAS = [
     {
@@ -30,15 +30,47 @@ const TAREFAS = [
         titulo: 'Tarefa 5',
         descricao: 'Descricao 5'
     }
-]
+];
 
 export default class Tarefas extends Component {
+    renderDetalhes = () => {
+        return (
+            <Route
+                path="/tarefas/:tarefaId"
+                render={(props) => {
+                    const { tarefaId } = props.match.params;
+                    const tarefa = TAREFAS.find((tarefa) => {
+                        return tarefa.id === parseInt(tarefaId, 10);
+                    });
+                    if (!tarefa) {
+                        return null;
+                    }
+                    return (
+                        <TransitionGroup>
+                            <CSSTransition
+                                key={tarefaId}
+                                classNames="fade"
+                                timeout={{ exit: 300, enter: 300 }}
+                            >
+                                <div style={{ position: "absolute", top: 0, left: 0 }}>
+                                    <h4>{tarefa.titulo}</h4>
+                                    <p>{tarefa.descricao} </p>
+                                </div>
+                            </CSSTransition>
+                        </TransitionGroup>
+
+                    )
+                }}
+            />
+        )
+    }
+
     render() {
         return (
-            <div style={{padding: '10px'}}>
+            <div style={{ padding: '10px' }}>
                 <h1>Tarefas</h1>
-                <div style={{display: 'flex', flexDirection: 'row'}}>
-                    <div style={{width : '300px'}}>
+                <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <div style={{ width: '300px' }}>
                         <h3>Lista</h3>
                         <ul>
                             {TAREFAS.map((tarefa) => {
@@ -48,26 +80,12 @@ export default class Tarefas extends Component {
                             })}
                         </ul>
                     </div>
-                    <div style={{width : '500px'}}>
-                        <h3>Detalhes</h3>
-                        <Route path="/tarefas/:tarefaId" render={(props) => {
-                            const {tarefaId} = props.match.params;
-                            const tarefa = TAREFAS.find((tarefa) => {
-                                return tarefa.id === parseInt(tarefaId, 10);
-                            });
-                            if (!tarefa) {
-                                return null;
-                            }
-                            return (
-                                <div>
-                                    <h4>{tarefa.titulo}</h4>
-                                    <p>{tarefa.descricao} </p>
-                                </div>
-                            )
-                        }} />
+                    <div style={{ width: '500px', position: "relative" }}>
+                        {this.renderDetalhes()}
+
                     </div>
                 </div>
             </div>
-        );
+        )
     }
 }
