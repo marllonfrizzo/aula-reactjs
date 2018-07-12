@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import {
     Form,
     FormGroup,
-    Label,
     Col,
-    Input,
     Button
 } from 'reactstrap';
 

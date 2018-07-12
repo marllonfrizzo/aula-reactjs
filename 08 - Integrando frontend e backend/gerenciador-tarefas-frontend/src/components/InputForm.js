@@ -1,14 +1,29 @@
 import React, { Component } from 'react';
-import {
-    FormGroup,
-    Label,
-    Col,
-    Input,
-    FormFeedback
-} from 'reactstrap';
+
+import { Form, Input, DatePicker } from 'antd';
+
+const FormItem = Form.Item;
 
 export default class InputForm extends Component {
-    state = {};
+    state = {
+        valid: null
+    };
+
+    onChange = (event) => {
+        const { masker } = this.props;
+
+        if (masker) {
+            event.target.value = masker(event.target.value);
+        }
+
+        const { value } = event.target;
+
+        this.setState({
+            valid: this.props.validator(value)
+        });
+
+        this.props.onChange(event);
+    }
 
     onInputChange = (event) => {
         const { onChange, validator, required } = this.props;
@@ -21,21 +36,57 @@ export default class InputForm extends Component {
         }
     }
 
-    isValid() {
-        return !this.props.required || !!this.state.valid;
+    isValid = () => {
+        const { value, validator } = this.props;
+        const valid = validator(value);
+        this.setState({ valid });
+        return valid;
+    }
+
+    onDateChange = (event, stringDate) => {
+        this.setState({
+            valid: this.props.validator(stringDate)
+        });
+
+        this.props.onChange({
+            target: {
+                value: stringDate,
+                id: this.props.id,
+            }
+        });
     }
 
     render() {
-        const { label, id, required, value, onChange, errorMessage, validator, type } = this.props;
+        const { label, id, value, errorMessage, type, dateFormat } = this.props;
         const { valid } = this.state;
+        const help = valid === false ? errorMessage : '';
+        const validateStatus = valid === false ? 'error' : 'success';
+
+        let input = null;
+        if (type === 'date') {
+            input = (
+                <DatePicker id={id}
+                    format={dateFormat}
+                    onChange={this.onDateChange} />
+            );
+        } else {
+            input = (
+                <Input id={id} type={type} onChange={this.onChange} value={value} />
+            )
+        }
+
         return (
-            <FormGroup row>
-                <Label for={id} sm={2}>{label}</Label>
-                <Col sm={10}>
-                    <Input id={id} type={type} value={value} required={required} valid={valid === true} invalid={valid === false} onChange={this.onInputChange} />
-                    <FormFeedback>{errorMessage}</FormFeedback>
-                </Col>
-            </FormGroup>
-        )
+            <FormItem
+                validateStatus={validateStatus}
+                label={label}
+                help={help}
+            >
+                {input}
+            </FormItem>
+        );
     }
+}
+
+InputForm.defaultProps = {
+    validator: () => true
 }
