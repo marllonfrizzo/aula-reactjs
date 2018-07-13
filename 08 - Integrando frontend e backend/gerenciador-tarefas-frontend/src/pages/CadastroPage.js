@@ -58,10 +58,6 @@ export default class CadastroPage extends Component {
         })
     }
 
-    _voltarClick = () => {
-        this.props.history.push('/login');
-    }
-
     render() {
         const {nome, email, cpf, nascimento, senha} = this.state;
         return (
@@ -122,7 +118,7 @@ export default class CadastroPage extends Component {
                     validator={Validators.validateNome} />
 
                     <FormItem>
-                        <Button htmlType="button" type="danger" onClick={this._voltarClick}>Voltar</Button>
+                        <Button htmlType="button" type="danger" onClick={() => this.props.history.push('/login')}>Voltar</Button>
                         {' '}
                         <Button htmlType="submit" type="primary">Salvar</Button>
                     </FormItem>

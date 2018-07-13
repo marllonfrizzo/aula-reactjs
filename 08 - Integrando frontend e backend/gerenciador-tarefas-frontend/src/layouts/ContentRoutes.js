@@ -11,7 +11,7 @@ const { Content } = Layout;
 export default class ContentRoutes extends Component {
     
     state = {}
-    
+
     render() {
         return (
             <Content style={{ margin: '24px 16px 0' }}>

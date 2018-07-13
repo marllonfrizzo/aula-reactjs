@@ -39,7 +39,7 @@ export default class LoginPage extends Component {
         axios.post('/usuarios/login', {
             email, senha
         }).then(response => {
-            const { data, status } = response;
+            const { data } = response;
             LoginManager.saveToken(data.token);
             this.props.history.push('/');
         }).catch(ex => {
